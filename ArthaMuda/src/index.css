@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: OnestFont;
+  src: url(Nunito-VariableFont_wght.ttf);
+}
+
+:root {
+  font-family: Nunito, sans-serif;
+  color: black;
+}
