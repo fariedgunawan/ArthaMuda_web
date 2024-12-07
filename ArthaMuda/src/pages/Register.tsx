@@ -39,7 +39,7 @@ export const EyeFilledIcon = (props: any) => {
     </svg>
   );
 };
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -48,7 +48,7 @@ const Login = () => {
     <div className="bg-cover bg-no-repeat min-h-screen flex items-center justify-center" style={{ backgroundImage: `url(${background})` }}>
       <div className="container flex flex-col items-center justify-center min-h-screen">
         <div className="title flex flex-col items-center">
-          <h2 className="text-[#3339B4] font-bold text-[40px]">Welcome</h2>
+          <h2 className="text-[#3339B4] font-bold text-[30px]">Create Your Account</h2>
           <img src={logo} className="w-[170px] mt-[40px]" alt="" />
           <h2 className="font-bold text-[20px] mt-[20px] text-[#3339B4]">ArthaMuda</h2>
         </div>
@@ -67,13 +67,13 @@ const Login = () => {
             variant="bordered"
           />
           <Button className="bg-[#3339B4] text-white text-[18px] px-[20px] w-[280px] py-[25px]" onClick={() => navigate("/")}>
-            Login
+            Register
           </Button>
           <h2 className="text-[14px] text-[#3339B4] font-medium">
-            Dont have an account ?{" "}
+            Have an account ?{" "}
             <span>
-              <button className="font-extrabold" onClick={() => navigate("/Register")}>
-                Register
+              <button className="font-extrabold" onClick={() => navigate("/")}>
+                Login
               </button>
             </span>
           </h2>
@@ -83,4 +83,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
