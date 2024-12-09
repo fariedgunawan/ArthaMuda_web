@@ -66,7 +66,7 @@ const Login = () => {
             type={isVisible ? "text" : "password"}
             variant="bordered"
           />
-          <Button className="bg-[#3339B4] text-white text-[18px] px-[20px] w-[280px] py-[25px]" onClick={() => navigate("/")}>
+          <Button className="bg-[#3339B4] text-white text-[18px] px-[20px] w-[280px] py-[25px]" onClick={() => navigate("/Dashboard")}>
             Login
           </Button>
           <h2 className="text-[14px] text-[#3339B4] font-medium">
