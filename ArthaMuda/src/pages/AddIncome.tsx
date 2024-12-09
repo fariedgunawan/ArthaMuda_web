@@ -38,7 +38,7 @@ const AddIncome = () => {
                 <img src={income} className="w-[50px]" alt="" />
                 <div className="caption-data flex flex-col gap-[5px] items-start">
                   <h2 className="text-white font-semibold text-[18px]">Uang Jajan</h2>
-                  <h2 className="text-[#11FFC6]">+ Rp. 500.000,00</h2>
+                  <h2 className="text-[#11FFC6]">+ Rp. 300.000,00</h2>
                 </div>
               </div>
               <div className="left-side flex flex-col items-end text-white text-[12px]">
