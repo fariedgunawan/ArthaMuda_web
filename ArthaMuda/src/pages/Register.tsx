@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import background from "../assets/bg-img.png";
 import logo from "../assets/logo.png";
+
 export const EyeSlashFilledIcon = (props: any) => {
   return (
     <svg aria-hidden="true" fill="none" focusable="false" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" {...props}>
@@ -42,8 +44,24 @@ export const EyeFilledIcon = (props: any) => {
 const Register = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = React.useState(false);
-
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/api/auth/register", {
+        username,
+        password,
+      });
+      console.log("Register Success:", response.data);
+      navigate("/"); 
+    } catch (err: any) {
+      console.error("Register Failed:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Registration failed");
+    }
+  };
   return (
     <div className="bg-cover bg-no-repeat min-h-screen flex items-center justify-center" style={{ backgroundImage: `url(${background})` }}>
       <div className="container flex flex-col items-center justify-center min-h-screen">
@@ -53,7 +71,18 @@ const Register = () => {
           <h2 className="font-bold text-[20px] mt-[20px] text-[#3339B4]">ArthaMuda</h2>
         </div>
         <div className="input-area flex flex-col items-center mt-[30px] gap-[20px]">
-          <Input isClearable className="w-[280px]" size="md" label="Email" placeholder="Enter your email" type="email" variant="bordered" onClear={() => console.log("input cleared")} />
+          <Input
+            isClearable
+            className="w-[280px]"
+            size="md"
+            label="Email"
+            placeholder="Enter your email"
+            type="email"
+            variant="bordered"
+            onClear={() => console.log("input cleared")}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
           <Input
             className="max-w-xs"
             endContent={
@@ -65,8 +94,11 @@ const Register = () => {
             placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
             variant="bordered"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <Button className="bg-[#3339B4] text-white text-[18px] px-[20px] w-[280px] py-[25px]" onClick={() => navigate("/")}>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <Button className="bg-[#3339B4] text-white text-[18px] px-[20px] w-[280px] py-[25px]" onClick={handleRegister}>
             Register
           </Button>
           <h2 className="text-[14px] text-[#3339B4] font-medium">

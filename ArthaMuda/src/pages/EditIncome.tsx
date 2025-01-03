@@ -1,59 +1,74 @@
 import { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import background from "../assets/bg-img.png";
 import income from "../assets/income.png";
 import outcome from "../assets/outcome.png";
-const AddIncome = () => {
+const EditIncome = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [transactions, setTransactions] = useState<any[]>([]); 
 
-  const getTokenFromCookies = () => {
+  const handleUpdate = () => {
     const token = document.cookie
       .split("; ")
       .find((row) => row.startsWith("token="))
       ?.split("=")[1];
-    return token;
-  };
-
-  const handleSubmit = async () => {
-    const token = getTokenFromCookies();
 
     if (!token) {
       alert("Please log in first");
       return;
     }
 
-    const data = {
-      type: "income",
-      name: title,
-      amount: parseFloat(amount),
-      date: date,
-    };
+    axios
+      .put(
+        `http://localhost:3000/api/transactions/${id}`,
+        { name: title, amount: parseFloat(amount), date },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then(() => {
+        alert("Transaction updated successfully");
+        navigate("/ListTransaction");
+      })
+      .catch((error) => {
+        console.error("Error updating transaction:", error);
+        alert("Failed to update transaction");
+      });
+  };
 
-    try {
-      axios.post("http://localhost:3000/api/transactions", data, {
+  const handleDelete = () => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+
+    if (!token) {
+      alert("Please log in first");
+      return;
+    }
+
+    axios
+      .delete(`http://localhost:3000/api/transactions/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+      })
+      .then(() => {
+        alert("Transaction deleted successfully");
+        navigate("/ListTransaction");
+      })
+      .catch((error) => {
+        console.error("Error deleting transaction:", error);
+        alert("Failed to delete transaction");
       });
-
-      if (token) {
-        console.log("Income added successfully, navigating to /Dashboard");
-        alert("Income added successfully!");
-        setTitle("");
-        setAmount("");
-        setDate("");
-        navigate("/Dashboard");
-      }
-    } catch (error) {
-      console.error("Error adding income:", error);
-      alert("Failed to add income");
-    }
   };
 
   useEffect(() => {
@@ -62,7 +77,7 @@ const AddIncome = () => {
       .find((row) => row.startsWith("token="))
       ?.split("=")[1];
 
-    if (token) {
+    if (token && id) {
       axios
         .get("http://localhost:3000/api/transactions/income", {
           headers: {
@@ -79,6 +94,26 @@ const AddIncome = () => {
         .catch((error) => {
           console.error("Error fetching transactions:", error);
         });
+
+      axios
+        .get(`http://localhost:3000/api/transactions/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          if (response.data.success) {
+            const { name, amount, date } = response.data.data;
+            setTitle(name);
+            setAmount(amount);
+            setDate(new Date(date).toISOString().split("T")[0]);
+          } else {
+            console.error("Error fetching transaction:", response.data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching transaction:", error);
+        });
     }
   }, []);
   return (
@@ -86,7 +121,7 @@ const AddIncome = () => {
       <div className="body flex flex-col">
         <div className="head bg-[#3339B4] flex flex-col rounded-b-[30px] pb-[20px] px-[16px] pt-[30px]">
           <div className="hello flex flex-row items-center justify-between text-white">
-            <h2 className="text-[25px] font-semibold">Add Income</h2>
+            <h2 className="text-[25px] font-semibold">Edit Income</h2>
             <FaUserCircle className="text-[30px]" />
           </div>
           <div className="input flex flex-col gap-[30px] text-white mt-[40px]">
@@ -103,15 +138,20 @@ const AddIncome = () => {
               <input type="date" placeholder="Input Balance Here.." className=" text-[16px] bg-transparent outline-none border-b-2 w-full" value={date} onChange={(e) => setDate(e.target.value)} />
             </div>
           </div>
-          <button className="flex justify-end text-white font-semibold text-[20px] mt-[20px]" onClick={handleSubmit}>
-            Add +
-          </button>
+          <div className="container-button-add flex flex-row items-center justify-between mt-[20px]">
+            <button className="flex text-red-500 font-semibold text-[20px]" onClick={handleDelete}>
+              Delete
+            </button>
+            <button className="flex text-white font-semibold text-[20px]" onClick={handleUpdate}>
+              Update
+            </button>
+          </div>
         </div>
 
         <div className="list-data mt-[30px] flex flex-col px-[16px]">
           <div className="head-data flex flex-row items-center justify-between">
             <h2 className="font-bold text-[20px] text-[#3339B4]">Last Income</h2>
-            <h2 className="font-medium text-[16px] text-[#3339B4]" onClick={() => navigate("/ListIncome")}>See More</h2>
+            <h2 className="font-medium text-[16px] text-[#3339B4]">See More</h2>
           </div>
           <div className="container-card-list flex flex-col gap-[10px] mt-[20px]">
             {transactions.map((transaction) => (
@@ -138,4 +178,4 @@ const AddIncome = () => {
   );
 };
 
-export default AddIncome;
+export default EditIncome;

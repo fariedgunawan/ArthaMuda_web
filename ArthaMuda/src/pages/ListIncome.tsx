@@ -6,7 +6,7 @@ import background from "../assets/bg-img.png";
 import outcome from "../assets/outcome.png";
 import axios from "axios";
 
-const ListTransaction = () => {
+const ListIncome = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const navigate = useNavigate();
 
@@ -18,7 +18,7 @@ const ListTransaction = () => {
 
     if (token) {
       axios
-        .get("http://localhost:3000/api/transactions", {
+        .get("http://localhost:3000/api/transactions/income", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -40,7 +40,7 @@ const ListTransaction = () => {
     <div className="bg-cover bg-no-repeat min-h-screen flex flex-col" style={{ backgroundImage: `url(${background})` }}>
       <div className="container px-[16px] flex flex-col gap-[13px]">
         <div className="head mt-[30px] flex flex-row justify-between items-center">
-          <h2 className="font-semibold text-[25px] text-[#3339B4]">Details</h2>
+          <h2 className="font-semibold text-[25px] text-[#3339B4]">Income List</h2>
           <FaUserCircle className="text-[30px] text-[#3339B4]" />
         </div>
 
@@ -74,4 +74,4 @@ const ListTransaction = () => {
   );
 };
 
-export default ListTransaction;
+export default ListIncome;
