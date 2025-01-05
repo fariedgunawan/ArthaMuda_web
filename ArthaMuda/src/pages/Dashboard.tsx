@@ -11,8 +11,8 @@ import axios from "axios";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string | null>(null);
-  const [balance, setBalance] = useState<number | null>(null); 
-  const [lastUpdate, setLastUpdate] = useState<string | null>(null); 
+  const [balance, setBalance] = useState<number | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<string | null>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Dashboard = () => {
         .then((response) => {
           if (response.data.success) {
             setBalance(response.data.data.balance);
-            const updatedAt = new Date().toLocaleString(); 
+            const updatedAt = new Date().toLocaleString();
             setLastUpdate(updatedAt);
           } else {
             console.error("Error fetching balance:", response.data.message);
@@ -134,7 +134,7 @@ const Dashboard = () => {
             <img src={outcome} className="w-[40px]" alt="" />
             <h2 className="mt-[12px] font-medium text-[#3339B4]">Outcome</h2>
           </div>
-          <div className="card-1 flex flex-col items-center">
+          <div className="card-1 flex flex-col items-center" onClick={() => navigate("/stats")}>
             <img src={stats} className="w-[40px]" alt="" />
             <h2 className="mt-[12px] font-medium text-[#3339B4]">Stats</h2>
           </div>
