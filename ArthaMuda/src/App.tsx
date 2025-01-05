@@ -9,6 +9,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 import EditIncome from "./pages/EditIncome";
 import ListIncome from "./pages/ListIncome";
 import ListOutcome from "./pages/ListOutcome";
+import Stats from "./pages/Stats";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/ListIncome" element={<ListIncome />} />
           <Route path="/ListOutcome" element={<ListOutcome />} />
           <Route path="/:id" element={<EditIncome />} />
+          <Route path="/stats" element={<Stats />} />
         </Route>
       </Routes>
     </Router>
