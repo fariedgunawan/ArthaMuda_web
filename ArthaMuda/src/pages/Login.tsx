@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react"; 
 import axios from "axios";
 import background from "../assets/bg-img.png";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.png"; 
+
 
 export const EyeSlashFilledIcon = (props: any) => {
   return (
@@ -41,6 +41,7 @@ export const EyeFilledIcon = (props: any) => {
     </svg>
   );
 };
+
 const Login = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = React.useState(false);
@@ -48,8 +49,14 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setLoading(true);
+    setError(""); 
+
     try {
       const response = await axios.post("http://localhost:3000/api/auth/login", { username, password });
 
@@ -58,50 +65,60 @@ const Login = () => {
       if (token) {
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 7);
-        document.cookie = `token=${token}; expires=${expirationDate.toUTCString()}; path=/`;
-        console.log("Cookies after setting token:", document.cookie);
-        console.log("Login successful:", response.data.message);
+        document.cookie = `token=${token}; expires=${expirationDate.toUTCString()}; path=/; Secure; SameSite=Lax`; // Added Secure and SameSite for better practice
+
+        console.log("Login successful. Navigating to Dashboard.");
         navigate("/Dashboard");
       } else {
         throw new Error("Token not found in response.");
       }
     } catch (err) {
       console.error("Login failed:", err);
-
       if (axios.isAxiosError(err)) {
         const errorMessage = err.response?.data?.message || "Invalid email or password.";
         setError(errorMessage);
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unexpected error occurred.");
+        setError("An unexpected error occurred. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-cover bg-no-repeat min-h-screen flex items-center justify-center" style={{ backgroundImage: `url(${background})` }}>
-      <div className="container flex flex-col items-center justify-center min-h-screen">
-        <div className="title flex flex-col items-center">
-          <h2 className="text-[#3339B4] font-bold text-[40px]">Welcome</h2>
-          <img src={logo} className="w-[170px] mt-[40px]" alt="" />
-          <h2 className="font-bold text-[20px] mt-[20px] text-[#3339B4]">ArthaMuda</h2>
+    <div className="min-h-screen bg-cover bg-center font-sans relative flex items-center justify-center p-4" style={{ backgroundImage: `url(${background})` }}>
+      {/* Overlay for background blur/darken effect */}
+      <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+
+      {/* Login Card */}
+      <div className="relative z-10 bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl p-8 sm:p-10 max-w-md w-full animate-scale-in border border-gray-200">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-indigo-700 mb-3">Welcome Back!</h1>
+          <img src={logo} className="w-24 mx-auto mb-4" alt="ArthaMuda Logo" />
+          <h2 className="text-2xl font-bold text-indigo-800">ArthaMuda</h2>
         </div>
-        <div className="input-area flex flex-col items-center mt-[30px] gap-[20px]">
+
+        <form onSubmit={handleLogin} className="space-y-6">
           <Input
             isClearable
-            className="w-[280px]"
-            size="md"
+            id="email"
+            className="w-full"
+            size="lg"
             label="Email"
             placeholder="Enter your email"
             type="email"
             variant="bordered"
-            onClear={() => console.log("input cleared")}
+            color="primary" 
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
           <Input
-            className="max-w-xs"
+            className="w-full"
+            id="password"
+            size="lg"
             endContent={
               <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibility}>
                 {isVisible ? <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" /> : <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />}
@@ -111,21 +128,32 @@ const Login = () => {
             placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
             variant="bordered"
+            color="primary" // NextUI specific color
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          {error && <p className="text-red-500">{error}</p>}
-          <Button className="bg-[#3339B4] text-white text-[18px] px-[20px] w-[280px] py-[25px]" onClick={handleLogin}>
-            Login
+
+          {error && <p className="text-red-600 text-center text-sm bg-red-100 p-2 rounded-md animate-fade-in">{error}</p>}
+
+          <Button
+            type="submit"
+            className="w-full py-3 bg-indigo-700 text-white font-bold text-xl rounded-lg shadow-lg hover:bg-indigo-800 transition-all duration-300 transform hover:scale-105"
+            isLoading={loading} 
+            isDisabled={loading} 
+            color="primary"
+          >
+            {loading ? "Logging In..." : "Login"}
           </Button>
-          <h2 className="text-[14px] text-[#3339B4] font-medium">
-            Dont have an account ?{" "}
-            <span>
-              <button className="font-extrabold" onClick={() => navigate("/Register")}>
-                Register
-              </button>
-            </span>
-          </h2>
+        </form>
+
+        <div className="text-center mt-6 text-gray-700">
+          <p className="text-md font-medium">
+            Don't have an account?{" "}
+            <Button variant="light" className="p-0 h-auto min-w-0 text-indigo-700 font-extrabold hover:underline" onClick={() => navigate("/Register")}>
+              Register
+            </Button>
+          </p>
         </div>
       </div>
     </div>
