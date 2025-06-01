@@ -8,3 +8,4 @@ npm install
 ```
 npm run dev
 ```
+4. Jangan lupa backendnya dinyalain ya soalnya buat API
