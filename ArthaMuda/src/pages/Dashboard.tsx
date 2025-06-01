@@ -197,7 +197,6 @@ const Dashboard = () => {
                   </div>
                   <div className="text-sm text-right opacity-90">
                     <p>{new Date(transaction.date).toLocaleDateString()}</p>
-                    <p>{new Date(transaction.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
                   </div>
                 </div>
               ))
