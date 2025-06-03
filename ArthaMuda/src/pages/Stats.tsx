@@ -1,10 +1,10 @@
 import { FaUserCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
-import background from "../assets/bg-img.png"; 
+import background from "../assets/bg-img.png";
 import { PieChart } from "@mui/x-charts/PieChart";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const Stats = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Stats = () => {
       ?.split("=")[1];
 
     if (!token) {
-      navigate("/"); 
+      navigate("/");
       return;
     }
 
@@ -29,7 +29,6 @@ const Stats = () => {
       setLoading(true);
       setError(null);
       try {
-        
         const balanceResponse = await axios.get("http://localhost:3000/api/transactions/balance", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -40,7 +39,6 @@ const Stats = () => {
           setError("Failed to load balance data.");
         }
 
-        
         const analysisResponse = await axios.get("http://localhost:3000/api/transactions/analysis", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -64,7 +62,7 @@ const Stats = () => {
 
   // Currency formatting function
   const formatCurrency = (amount: number) => {
-    return `Rp. ${amount.toLocaleString("id-ID")}`; 
+    return `Rp. ${amount.toLocaleString("id-ID")}`;
   };
 
   // Prepare data for PieChart
@@ -86,10 +84,7 @@ const Stats = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 font-sans p-6">
         <p className="text-xl text-center mb-4">{error}</p>
-        <button
-          onClick={() => window.location.reload()} 
-          className="px-6 py-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-200"
-        >
+        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-200">
           Retry
         </button>
       </div>
@@ -168,14 +163,23 @@ const Stats = () => {
 
               <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 flex justify-between items-center shadow-sm">
                 <h4 className="text-lg font-semibold text-gray-800">Spending Percentage</h4>
-                <p className="text-xl font-bold text-gray-800">{spendingPercentage.toFixed(1)}%</p>
+                <p className="text-xl font-bold text-gray-800">{(spendingPercentage ?? 0).toFixed(1)}%</p>
               </div>
             </div>
 
             <div className="mt-8 text-center bg-indigo-50 p-6 rounded-lg shadow-inner">
               <h4 className="text-xl font-semibold text-indigo-800 mb-3">Your Spending Status:</h4>
-              <p className={`text-4xl font-extrabold tracking-wide ${status === "boros" ? "text-red-600 animate-pulse-once" : "text-green-600"}`}>{status === "boros" ? "Boros!" : "Hemat!"}</p>
-              <p className="text-gray-600 mt-2 text-md">{status === "boros" ? "Time to review your spending habits!" : "Excellent! Keep up the great work managing your finances."}</p>
+              {transactions.totalIncome == 0 && transactions.totalOutcome == 0 ? (
+                <>
+                  <p className="text-xl font-extrabold tracking-wide text-yellow-600">Please Add Your Transaction</p>
+                  <p className="text-gray-600 mt-2 text-md">Please add transactions to view your financial statistics.</p>
+                </>
+              ) : (
+                <>
+                  <p className={`text-4xl font-extrabold tracking-wide ${status === "boros" ? "text-red-600 animate-pulse-once" : "text-green-600"}`}>{status === "boros" ? "Boros!" : "Hemat!"}</p>
+                  <p className="text-gray-600 mt-2 text-md">{status === "boros" ? "Time to review your spending habits!" : "Excellent! Keep up the great work managing your finances."}</p>
+                </>
+              )}
             </div>
           </div>
         </div>
